@@ -6,6 +6,8 @@ tensorboard
 matplotlib
 pandas
 
+librosa
+pyworld
 speechbrain~=0.5.12
 datasets
 torch_audiomentations

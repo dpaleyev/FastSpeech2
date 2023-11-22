@@ -111,3 +111,5 @@ wandb/
 .vscode/
 .idea/
 __MACOSX/
+
+waveglow_256channels_ljs_v2.pt
