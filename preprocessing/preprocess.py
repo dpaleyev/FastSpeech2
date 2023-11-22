@@ -13,6 +13,8 @@ def generate_features(path: str):
     energy_path = os.path.join(path, 'energy')
     pitch_path = os.path.join(path, 'pitch')
 
+    os.makedirs(energy_path, exist_ok=True)
+    os.makedirs(pitch_path, exist_ok=True)
 
     min_energy = None
     max_energy = None
@@ -21,8 +23,7 @@ def generate_features(path: str):
 
 
 
-    for i, filename in tqdm(enumerate(os.listdir(wav_path))):
-        print(wav_path, filename)
+    for i, filename in tqdm(enumerate(sorted(os.listdir(wav_path)))):
         mel_spectrogram, energy = audio.tools.get_mel(os.path.join(wav_path, filename))
         mel_spectrogram = mel_spectrogram.numpy().astype(np.float32)
 
@@ -48,8 +49,8 @@ def generate_features(path: str):
         min_pitch = pitch.min() if min_pitch is None else min(min_pitch, pitch.min())
         max_pitch = pitch.max() if max_pitch is None else max(max_pitch, pitch.max())
 
-        np.save(os.path.join(energy_path, str(i)), energy)
-        np.save(os.path.join(pitch_path, str(i)), pitch)
+        np.save(os.path.join(energy_path, "ljspeech-energy-%05d.npy" % (i+1)), energy)
+        np.save(os.path.join(pitch_path, "ljspeech-pitch-%05d.npy" % (i+1)), pitch)
 
     return {
         'min_energy': min_energy,
