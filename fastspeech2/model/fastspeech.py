@@ -4,6 +4,7 @@ import numpy as np
 
 from fastspeech2.model.transformer_layers import Encoder, Decoder
 from fastspeech2.model.predictor import LengthRegulator, Predictor
+from fastspeech2.model.utils import get_mask_from_lengths
 
 
 class FastSpeech2(nn.Module):
@@ -107,6 +108,12 @@ class FastSpeech2(nn.Module):
             embedding = self.energy_embedding(torch.bucketize(torch.log(energy_predictor_output), self.energy_bounds))
         
         return embedding, energy_predictor_output
+    
+    def mask_tensor(self, mel_output, position, mel_max_length):
+        lengths = torch.max(position, -1)[0]
+        mask = ~get_mask_from_lengths(lengths, max_len=mel_max_length)
+        mask = mask.unsqueeze(-1).expand(-1, -1, mel_output.size(-1))
+        return mel_output.masked_fill(mask, 0.)
     
     def forward(self, src_seq, 
                 src_pos, 

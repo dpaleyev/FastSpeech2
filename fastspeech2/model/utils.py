@@ -23,3 +23,12 @@ def create_alignment(base_mat, duration_predictor_output):
                 base_mat[i][count+k][j] = 1
             count = count + duration_predictor_output[i][j]
     return base_mat
+
+def get_mask_from_lengths(lengths, max_len=None):
+    if max_len == None:
+        max_len = torch.max(lengths).item()
+
+    ids = torch.arange(0, max_len, 1, device=lengths.device)
+    mask = (ids < lengths.unsqueeze(1)).bool()
+
+    return mask
